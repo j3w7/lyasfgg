@@ -12,14 +12,14 @@ abstract class CalculationTrainingsLoop extends REPL[(Int, Int), Int] {
   def gen_b: Int
   def op(a: Int, b: Int): Int
   def opsign: String
-  def opname: (String, String)
+  def lang_opname: (String, String)
 
   def read: (Int, Int) = {
     val a = gen_a
     val b = gen_b
 
     println(a + " " + opsign + " " + b)
-    play(opname._1, a + opname._2 + b)
+    play(lang_opname._1, a + lang_opname._2 + b)
 
     readLine
 
@@ -30,6 +30,8 @@ abstract class CalculationTrainingsLoop extends REPL[(Int, Int), Int] {
 
   def print(i: Int) = {
     println(i)
+    play(lang_opname._1, i.toString)
+
     readLine
   }
 
@@ -43,22 +45,22 @@ abstract class CalculationTrainingsLoop extends REPL[(Int, Int), Int] {
 }
 
 abstract class MultiplicationTrainingLoop extends CalculationTrainingsLoop {
-  def opname = ("en", "times")
+  def lang_opname = ("en", "times")
   def opsign = "*"
   def op(a: Int, b: Int) = a * b
 }
 abstract class DivisionTrainingLoop extends CalculationTrainingsLoop {
-  def opname = ("en", "divided by")
+  def lang_opname = ("en", "divided by")
   def opsign = "/"
   def op(a: Int, b: Int) = a / b
 }
 abstract class SubtractionTrainingLoop extends CalculationTrainingsLoop {
-  def opname = ("en", "minus")
+  def lang_opname = ("en", "minus")
   def opsign = "-"
   def op(a: Int, b: Int) = a - b
 }
 abstract class AdditionTrainingLoop extends CalculationTrainingsLoop {
-  def opname = ("en", "plus")
+  def lang_opname = ("en", "plus")
   def opsign = "+"
   def op(a: Int, b: Int) = a + b
 }
