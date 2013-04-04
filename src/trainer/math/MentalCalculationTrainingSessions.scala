@@ -19,8 +19,9 @@ abstract class CalculationTrainingsLoop extends REPL[(Int, Int), Int] {
     val b = gen_b
 
     println(a + " " + opsign + " " + b)
-    println("play")
     play(opname._1, a + opname._2 + b)
+
+    readLine
 
     return (a, b)
   }
@@ -28,8 +29,8 @@ abstract class CalculationTrainingsLoop extends REPL[(Int, Int), Int] {
   def eval(p: (Int, Int)) = op(p._1, p._2)
 
   def print(i: Int) = {
-    readLine
     println(i)
+    readLine
   }
 
   def init() = {}

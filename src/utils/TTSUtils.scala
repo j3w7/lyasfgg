@@ -26,12 +26,9 @@ object TTSUtils {
     val audio = tts(lang, word)
     val bais = new ByteArrayInputStream(audio)
 
-    println(audio.length)
-
     val pt = new PlayerThread(bais)
     pt.start();
     while (!pt.player.isComplete()) {
-      //System.out.println("Position: " + pt.player.getPosition())
       try {
         Thread.sleep(10);
       } catch {
