@@ -1,6 +1,5 @@
-package test
+package spells
 
-import java.util.Date
 import java.lang.Math.abs
 
 object WeekDaySpell extends App {
