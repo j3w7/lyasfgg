@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream
 
 import javazoom.jl.player.Player
 import scalaj.http.Http
+import utils.LStringImplicits._
 
 class PlayerThread(is: ByteArrayInputStream) extends Thread {
   val device = javazoom.jl.player.FactoryRegistry.systemRegistry().createAudioDevice()
@@ -22,8 +23,8 @@ object TTSUtils {
     .option(urlConn ⇒ urlConn.addRequestProperty("User-Agent", "Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; Win64; x64; Trident/5.0)"))
     .asBytes
 
-  def play(lang: String, word: String) = {
-    val audio = tts(lang, word)
+  def play(string: LString) = {
+    val audio = tts(string.lang, string.string)
     val bais = new ByteArrayInputStream(audio)
 
     val pt = new PlayerThread(bais)
@@ -38,9 +39,8 @@ object TTSUtils {
   }
 
   def main(args: Array[String]) {
-    play("en", "Ok. This doesn't look too bad.")
-    // play("ja", "〜のそばに")
-
+    play("Ok. This doesn't look too bad.".en)
+    play("〜のそばに".ja)
   }
 
 }

@@ -5,62 +5,98 @@ import utils.ExecutionUtils.REPL
 import utils.RandomUtils.randBetween
 import utils.TTSUtils.play
 import scala.Console._
+import scala.testing.Show
+import scala.Function1
+import utils.LString
+import utils.LStringImplicits._
 
-abstract class CalculationTrainingsLoop extends REPL[(Int, Int), Int] {
+abstract class OpLabel(val label: String) {
+  def apply[T1, T2](args: (T1, T2)): String =
+    List(args._1, label, args._2).mkString(" ")
+}
 
-  def gen_a: Int
-  def gen_b: Int
-  def op(a: Int, b: Int): Int
-  def opsign: String
-  def lang_opname: (String, String)
+case class PlayLabel(val name: LString) extends OpLabel(name.string) {
+  def apply[T1, T2](args: (T1, T2)): LString = apply(args)
+}
+case class SignLabel(val sign: String) extends OpLabel(sign) {
+}
 
-  def read: (Int, Int) = {
-    val a = gen_a
-    val b = gen_b
+class CalculationTrainingsLoop(
+  gen: Unit ⇒ (Int, Int),
+  op: (Int, Int) ⇒ Int,
+  opLblPrint: SignLabel,
+  opLblPlay: PlayLabel) {
+  // main
 
-    println(a + " " + opsign + " " + b)
-    play(lang_opname._1, a + lang_opname._2 + b)
+  def run() = {
 
-    readLine
+    // domain specific methods
 
-    return (a, b)
+    def gradeAnswer(correct: Int)(answer: Int) = correct == answer
+
+    def taskDescription(params: (Int, Int)) = {
+      println(opLblPrint(params))
+      play(opLblPlay(params))
+    }
+
+    def pause = { readLine; Unit }
+
+    // execution loop
+
+    while (true) {
+
+      // read, eval, prnt
+
+      def read1 = pause // warte auf das nächste generieren
+      def eval1 = gen
+      def print1 = taskDescription
+
+      val result = eval1(read1);
+      val context = print1(result);
+
+      // read, eval, prnt
+
+      val correct = op(result) // TODO hier wird context übergeben
+
+      def read2 = readInt()
+      def eval2 = gradeAnswer(correct)_
+      def print2 = (a: Any) ⇒ println(a)
+
+      print2(eval2(read2))
+
+      // read, eval, prnt
+
+      def read3 = pause
+      def eval3 = identity[Unit]_
+      def print3 = (a: Any) ⇒ println(a)
+
+      print3(eval3(read3))
+
+    }
   }
-
-  def eval(p: (Int, Int)) = op(p._1, p._2)
-
-  def print(i: Int) = {
-    println(i)
-    play(lang_opname._1, i.toString)
-
-    readLine
-  }
-
-  def init() = {}
 
   def main(args: Array[String]) {
-    init
     run
   }
 
 }
 
-abstract class MultiplicationTrainingLoop extends CalculationTrainingsLoop {
-  def lang_opname = ("en", "times")
-  def opsign = "*"
-  def op(a: Int, b: Int) = a * b
-}
+abstract class MultiplicationTrainingLoop(gen: Unit ⇒ (Int, Int)) extends CalculationTrainingsLoop(gen, op, "*", "times".en)
+
 abstract class DivisionTrainingLoop extends CalculationTrainingsLoop {
-  def lang_opname = ("en", "divided by")
+  def lang_opname = new LString("en", "divided by")
   def opsign = "/"
   def op(a: Int, b: Int) = a / b
 }
+
 abstract class SubtractionTrainingLoop extends CalculationTrainingsLoop {
-  def lang_opname = ("en", "minus")
+  def lang_opname = new LString("en", "minus")
   def opsign = "-"
   def op(a: Int, b: Int) = a - b
 }
+
 abstract class AdditionTrainingLoop extends CalculationTrainingsLoop {
-  def lang_opname = ("en", "plus")
+  def lang_opname = new LString("en", "plus")
   def opsign = "+"
   def op(a: Int, b: Int) = a + b
 }
