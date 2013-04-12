@@ -9,23 +9,39 @@ import scala.testing.Show
 import scala.Function1
 import utils.LString
 import utils.LStringImplicits._
+import trainer.math.CalculationTrainingsLoop._
 
 abstract class OpLabel(val label: String) {
-  def apply[T1, T2](args: (T1, T2)): String =
+  def label[T1, T2](args: (T1, T2)): String =
     List(args._1, label, args._2).mkString(" ")
 }
 
 case class PlayLabel(val name: LString) extends OpLabel(name.string) {
-  def apply[T1, T2](args: (T1, T2)): LString = apply(args)
+  def llabel[T1, T2](args: (T1, T2)): LString = new LString(name.lang, label(args))
 }
-case class SignLabel(val sign: String) extends OpLabel(sign) {
+
+case class SignLabel(val sign: String) extends OpLabel(sign)
+
+object CalculationTrainingsLoop {
+
+  implicit def playLabel: LString ⇒ PlayLabel = new PlayLabel(_)
+  implicit def signLabel: String ⇒ SignLabel = new SignLabel(_)
+
+  implicit def toLString: PlayLabel ⇒ LString = lbl ⇒ lbl.name
+
+  def gen2(range1: (Int, Int), range2: (Int, Int)): (Unit ⇒ (Int, Int)) =
+    { _ ⇒ (randBetween(range1._1, range1._2), randBetween(range2._1, range2._2)) }
+
+  def optNFE[T](t: ⇒ T) = try { Some(t) } catch { case nfe: NumberFormatException ⇒ None }
+
+  def myReadInt = optNFE(readInt)
 }
 
 class CalculationTrainingsLoop(
   gen: Unit ⇒ (Int, Int),
   op: (Int, Int) ⇒ Int,
-  opLblPrint: SignLabel,
-  opLblPlay: PlayLabel) {
+  printLabel: SignLabel,
+  playLabel: PlayLabel) {
   // main
 
   def run() = {
@@ -34,9 +50,13 @@ class CalculationTrainingsLoop(
 
     def gradeAnswer(correct: Int)(answer: Int) = correct == answer
 
+    println("sound? ")
+    val sound = readBoolean()
+
     def taskDescription(params: (Int, Int)) = {
-      println(opLblPrint(params))
-      play(opLblPlay(params))
+      println(printLabel.label(params))
+      if (sound)
+        play(playLabel.llabel(params))
     }
 
     def pause = { readLine; Unit }
@@ -45,33 +65,33 @@ class CalculationTrainingsLoop(
 
     while (true) {
 
-      // read, eval, prnt
+      // myRead, eval, prnt
 
-      def read1 = pause // warte auf das nächste generieren
+      def myRead1 = Unit // warte auf das nächste generieren
       def eval1 = gen
-      def print1 = taskDescription
+      def print1 = taskDescription(_)
 
-      val result = eval1(read1);
+      val result: (Int, Int) = eval1(myRead1);
       val context = print1(result);
 
-      // read, eval, prnt
+      // myRead, eval, prnt
 
-      val correct = op(result) // TODO hier wird context übergeben
+      val correct = op(result._1, result._2) // TODO hier wird context übergeben; TODO hier gibt's Typ Probleme
 
-      def read2 = readInt()
-      def eval2 = gradeAnswer(correct)_
-      def print2 = (a: Any) ⇒ println(a)
+      def myRead2 = myReadInt // TODO capture NumberFormatException if no or malformed input
+      def eval2 = (i: Int) ⇒ {
+        if (gradeAnswer(correct)(i)) "ok" else "wrong, should be " + correct
+      }
+      def print2 = (msg: String) ⇒ {
+        println(msg);
+        if (sound) play(msg.en)
+      }
 
-      print2(eval2(read2))
+      print2(eval2(myRead2.getOrElse(-1)))
 
-      // read, eval, prnt
+      // pause-repl 
 
-      def read3 = pause
-      def eval3 = identity[Unit]_
-      def print3 = (a: Any) ⇒ println(a)
-
-      print3(eval3(read3))
-
+      readLine()
     }
   }
 
@@ -81,66 +101,42 @@ class CalculationTrainingsLoop(
 
 }
 
-abstract class MultiplicationTrainingLoop(gen: Unit ⇒ (Int, Int)) extends CalculationTrainingsLoop(gen, op, "*", "times".en)
+class MultiplicationTrainingLoop(gen: Unit ⇒ (Int, Int))
+  extends CalculationTrainingsLoop(gen, { _ * _ }, "*", "times".en)
 
-abstract class DivisionTrainingLoop extends CalculationTrainingsLoop {
-  def lang_opname = new LString("en", "divided by")
-  def opsign = "/"
-  def op(a: Int, b: Int) = a / b
-}
+class DivisionTrainingLoop(gen: Unit ⇒ (Int, Int))
+  extends CalculationTrainingsLoop(gen, { _ / _ }, "/", "divided by".en)
 
-abstract class SubtractionTrainingLoop extends CalculationTrainingsLoop {
-  def lang_opname = new LString("en", "minus")
-  def opsign = "-"
-  def op(a: Int, b: Int) = a - b
-}
+class SubtractionTrainingLoop(gen: Unit ⇒ (Int, Int))
+  extends CalculationTrainingsLoop(gen, { _ - _ }, "-", "minus".en)
 
-abstract class AdditionTrainingLoop extends CalculationTrainingsLoop {
-  def lang_opname = new LString("en", "plus")
-  def opsign = "+"
-  def op(a: Int, b: Int) = a + b
-}
+class AdditionTrainingLoop(gen: Unit ⇒ (Int, Int))
+  extends CalculationTrainingsLoop(gen, { _ + _ }, "+", "plus".en)
 
-object Multiplication11Loop extends MultiplicationTrainingLoop {
-  def gen_a = randBetween(6, 9)
-  def gen_b = randBetween(6, 9)
-}
+object Multiplication11Loop extends MultiplicationTrainingLoop(gen2((6, 9), (6, 9)))
+object Multiplication21Loop extends MultiplicationTrainingLoop(gen2((1, 99), (1, 9)))
+object Multiplication31Loop extends MultiplicationTrainingLoop(gen2((1, 999), (1, 9)))
+object Addition33Loop extends AdditionTrainingLoop(gen2((1, 999), (1, 999)))
+object Addition43Loop extends AdditionTrainingLoop(gen2((1, 9999), (1, 999)))
+object Addition44Loop extends AdditionTrainingLoop(gen2((1, 9999), (1, 9999)))
 
-object Multiplication21Loop extends MultiplicationTrainingLoop {
-  def gen_a = randBetween(1, 99)
-  def gen_b = randBetween(1, 9)
-}
+object AdditionLoop {
+  def main(args: Array[String]) {
+    println("a digits: "); val da = pow(10, (myReadInt.getOrElse(10)).toDouble).toInt - 1
+    println("b digits: "); val db = pow(10, (myReadInt.getOrElse(10)).toDouble).toInt - 1
 
-object Multiplication31Loop extends MultiplicationTrainingLoop {
-  def gen_a = randBetween(1, 999)
-  def gen_b = randBetween(1, 9)
-}
-
-object Addition33Loop extends AdditionTrainingLoop {
-  def gen_a = randBetween(1, 9999)
-  def gen_b = randBetween(1, 999)
-}
-
-object Addition43Loop extends AdditionTrainingLoop {
-  def gen_a = randBetween(1, 9999)
-  def gen_b = randBetween(1, 999)
-}
-
-object Addition44Loop extends AdditionTrainingLoop {
-  def gen_a = randBetween(1, 9999)
-  def gen_b = randBetween(1, 9999)
-}
-
-object AdditionLoop extends AdditionTrainingLoop {
-
-  var da = 0
-  var db = 0
-
-  def gen_a = randBetween(1, da)
-  def gen_b = randBetween(1, db)
-
-  override def init = {
-    println("a digits: "); da = pow(10, readInt).toInt - 1
-    println("b digits: "); db = pow(10, readInt).toInt - 1
+    new AdditionTrainingLoop(gen2((1, da), (1, db))).run()
   }
 }
+
+object MultiplicationLoop {
+  def main(args: Array[String]) {
+    println("a digits: "); val da = pow(10, (myReadInt.getOrElse(10)).toDouble).toInt - 1
+    println("b digits: "); val db = pow(10, (myReadInt.getOrElse(10)).toDouble).toInt - 1
+
+    new MultiplicationTrainingLoop(gen2((1, da), (1, db))).run()
+  }
+}
+
+// TODO Kettenaufgaben: 1. gen + gen  if falsch von vorne else trainiere result + gen ... usw ...; Evtl. auch mit variation der operatoren und zahlengrößen
+
