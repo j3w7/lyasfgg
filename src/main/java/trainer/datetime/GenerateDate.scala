@@ -9,19 +9,20 @@ import utils.ExecutionUtils.REPL
 import utils.LocaleUtils._
 import utils.RandomUtils
 import spells.WeekDaySpellBenjamin._
+import org.joda.time.LocalDate
 
-object DateTrainingsLoop extends App with REPL[DateTime, String] {
+object DateTrainingsLoop extends App with REPL[LocalDate, String] {
 
   def init() = {}
 
-  def read: DateTime = {
+  def read: LocalDate = {
     val dt = genDate
     println(DateTimeFormat.forPattern("dd.MM.yyyy").print(dt))
     readLine
     return dt
   }
 
-  def eval(dt: DateTime): String = {
+  def eval(dt: LocalDate): String = {
     return getWeekDay(dt, CHINA) + "  " +
       getWeekDay(dt, JAPAN) + "  " +
       getWeekDay(dt, KOREA) + "\n" +
@@ -40,31 +41,23 @@ object DateTrainingsLoop extends App with REPL[DateTime, String] {
 
 }
 
-object YearTrainingsLoop extends App with REPL[Int, Int] {
+object YearTrainingsLoop extends App {
 
-  def init() = {}
+  while (true) {
 
-  def read: Int = {
     val year = RandomUtils.randBetween(1600, 2199)
     println(year)
     readLine
-    return year
-  }
 
-  def eval(y: Int): Int = {
-    val cc = y.toString.substring(0, 2).toInt
-    val dy = y.toString.substring(2, 4).toInt
+    val cc = year.toString.substring(0, 2).toInt
+    val dy = year.toString.substring(2, 4).toInt
 
-    return cv(cc) + r(dy)
-  }
+    val s = cv(cc) + r(dy)
 
-  def print(s: Int) = {
     println(s + "\n")
-    println(s%7 + "\n")
-  }
+    println(s % 7 + "\n")
 
-  init
-  run
+  }
 
 }
 
