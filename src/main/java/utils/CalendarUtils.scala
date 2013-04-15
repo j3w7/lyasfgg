@@ -21,8 +21,11 @@ object CalendarUtils {
     new LocalDate(year, month, day);
   }
 
-  // TODO check if +1 is correct
-  def getWeekDay(dt: LocalDate, l: Locale): String = new DateFormatSymbols(l).getWeekdays()(dt.getDayOfWeek+1)
+  def getWeekDay(dt: LocalDate, l: Locale): String = getWeekDay((dt.getDayOfWeek + 1) % 7, l)
+
+  def getWeekDay(i: Int, l: Locale): String = new DateFormatSymbols(l).getWeekdays()(i)
+
+  def getMonthName(i: Int, l: Locale): String = new DateFormatSymbols(l).getMonths()(i - 1)
 
   def daysFromTo(start: LocalDate, end: LocalDate): Stream[LocalDate] =
     if (start < end)

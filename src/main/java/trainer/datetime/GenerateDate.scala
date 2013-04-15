@@ -1,46 +1,52 @@
 package trainer.datetime
 
-import java.util.Locale._
-import org.joda.time.DateTime
+import java.util.Locale.GERMAN
+import java.util.Locale.GERMANY
+
 import org.joda.time.format.DateTimeFormat
+
+import spells.WeekDaySpellBenjamin.cv
+import spells.WeekDaySpellBenjamin.mv
+import spells.WeekDaySpellBenjamin.r
 import utils.CalendarUtils.genDate
+import utils.CalendarUtils.getMonthName
 import utils.CalendarUtils.getWeekDay
-import utils.ExecutionUtils.REPL
-import utils.LocaleUtils._
 import utils.RandomUtils
-import spells.WeekDaySpellBenjamin._
-import org.joda.time.LocalDate
 
-object DateTrainingsLoop extends App with REPL[LocalDate, String] {
+object DateTrainingsLoop extends App {
 
-  def init() = {}
+  while (true) {
 
-  def read: LocalDate = {
     val dt = genDate
     println(DateTimeFormat.forPattern("dd.MM.yyyy").print(dt))
+
+    val myAnswer = readLine
+
+    val weekday = getWeekDay(dt, GERMAN)
+
+    val msg = if (myAnswer == weekday) "ok" else "no, it's a " + weekday
+    println(msg)
+
     readLine
-    return dt
   }
-
-  def eval(dt: LocalDate): String = {
-    return getWeekDay(dt, CHINA) + "  " +
-      getWeekDay(dt, JAPAN) + "  " +
-      getWeekDay(dt, KOREA) + "\n" +
-      getWeekDay(dt, FRANCE) + "  " +
-      getWeekDay(dt, ITALY) + "  " +
-      getWeekDay(dt, SPANISH) + "\n" +
-      getWeekDay(dt, INDIA) + "  " +
-      getWeekDay(dt, RUSSIA) + "  " +
-      getWeekDay(dt, GREECE)
-  }
-
-  def print(s: String) = println(s + "\n")
-
-  init
-  run
 
 }
 
+object MonthTrainingsLoop extends App {
+
+  while (true) {
+
+    val month = RandomUtils.randBetween(1, 12)
+    println(getMonthName(month, GERMANY))
+    readLine
+
+    val r = mv(month)
+    print(r)
+    readLine
+
+  }
+
+}
 object YearTrainingsLoop extends App {
 
   while (true) {
@@ -52,12 +58,61 @@ object YearTrainingsLoop extends App {
     val cc = year.toString.substring(0, 2).toInt
     val dy = year.toString.substring(2, 4).toInt
 
-    val s = cv(cc) + r(dy)
+    val s = (cv(cc) + r(dy)) % 7
 
     println(s + "\n")
-    println(s % 7 + "\n")
+
+  }
+}
+
+object ModSevenTrainingsLoop extends App {
+
+  while (true) {
+
+    val num = RandomUtils.randBetween(0, 99)
+    println(num)
+    readLine
+
+    val s = num % 7
+
+    println(s + "\n")
 
   }
 
 }
+
+object DivFourTrainingsLoop extends App {
+
+  while (true) {
+
+    val num = RandomUtils.randBetween(0, 99)
+    println(num)
+    readLine
+
+    val s = Math.abs(num / 4)
+
+    println(s + "\n")
+
+  }
+
+}
+
+
+object DivFourModSevenTrainingsLoop extends App {
+
+  while (true) {
+
+    val num = RandomUtils.randBetween(0, 99)
+    println(num)
+    readLine
+
+    val s = Math.abs(num / 4) % 7
+
+    println(s + "\n")
+
+  }
+
+}
+
+
 
