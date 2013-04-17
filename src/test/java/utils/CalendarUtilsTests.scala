@@ -13,10 +13,9 @@ class CalendarUtilsTest extends FlatSpec with GeneratorDrivenPropertyChecks {
 
   "Weekday names" should "be calculated for all integers" in {
 
-    for (i <- 0 to 100) {
+    for (i <- 0 to 99)
       assert(getWeekDay(i, GERMAN) != "")
 
-    }
   }
 
 }

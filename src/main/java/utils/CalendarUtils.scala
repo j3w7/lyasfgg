@@ -21,9 +21,14 @@ object CalendarUtils {
     new LocalDate(year, month, day);
   }
 
-  def getWeekDay(dt: LocalDate, l: Locale): String = getWeekDay((dt.getDayOfWeek + 1) % 7, l)
+  def getWeekDay(dt: LocalDate, l: Locale): String = getWeekDay(dt.getDayOfWeek(), l)
 
-  def getWeekDay(i: Int, l: Locale): String = new DateFormatSymbols(l).getWeekdays()(i)
+  def getWeekDay(i: Int, l: Locale): String = {
+    var idx = (i + 1) % 7
+    if (idx == 0)
+      idx = 7
+    new DateFormatSymbols(l).getWeekdays()(idx)
+  }
 
   def getMonthName(i: Int, l: Locale): String = new DateFormatSymbols(l).getMonths()(i - 1)
 
