@@ -15,25 +15,10 @@ import utils.LStringImplicits._
 
 object MathTrainer {
 
-  def main(args: Array[String]) {
-
-    println("sound?")
-    val useSound = readBoolean()
-
-    println("operation:")
-
-    val (f, lbl, plbl) = readChar() match {
-      case '+' ⇒ ({ (a: Int, b: Int) ⇒ a + b }, "+", "plus")
-      case '-' ⇒ ({ (a: Int, b: Int) ⇒ a - b }, "-", "minus")
-      case '*' ⇒ ({ (a: Int, b: Int) ⇒ a * b }, "*", "times")
-      case '/' ⇒ ({ (a: Int, b: Int) ⇒ a / b }, "/", "diveded by")
-      case '%' ⇒ ({ (a: Int, b: Int) ⇒ a % b }, "%", "modulo")
-    }
-
-    println("a digits: "); val da = pow(10, readInt).toInt - 1
-    println("b digits: "); val db = pow(10, readInt).toInt - 1
-
-    def gen = { _: Unit ⇒ (randBetween(1, da), randBetween(1, db)) }
+  def loop(
+    gen: (Unit ⇒ (Int, Int)),
+    f: (Int, Int) ⇒ Int,
+    lbl: String, plbl: String, useSound: Boolean) = {
 
     while (true) {
 
@@ -53,7 +38,28 @@ object MathTrainer {
       println("any key to continue")
       readLine
     }
+  }
 
+  def main(args: Array[String]) {
+
+    println("sound?")
+    val useSound = readBoolean()
+
+    println("operation:")
+
+    val (f, lbl, plbl) = readChar() match {
+      case '+' ⇒ ({ (a: Int, b: Int) ⇒ a + b }, "+", "plus")
+      case '-' ⇒ ({ (a: Int, b: Int) ⇒ a - b }, "-", "minus")
+      case '*' ⇒ ({ (a: Int, b: Int) ⇒ a * b }, "*", "times")
+      case '/' ⇒ ({ (a: Int, b: Int) ⇒ a / b }, "/", "diveded by")
+      case '%' ⇒ ({ (a: Int, b: Int) ⇒ a % b }, "%", "modulo")
+    }
+
+    println("a digits: "); val da = pow(10, readInt).toInt - 1
+    println("b digits: "); val db = pow(10, readInt).toInt - 1
+
+    def gen = { _: Unit ⇒ (randBetween(1, da), randBetween(1, db)) }
+    loop(gen, f, lbl, plbl, useSound)
   }
 
 }
