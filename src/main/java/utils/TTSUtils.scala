@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream
 
 import javazoom.jl.player.Player
 import scalaj.http.Http
+import scalaj.http.HttpOptions
 import utils.LStringImplicits._
 
 class PlayerThread(is: ByteArrayInputStream) extends Thread {
@@ -17,11 +18,13 @@ class PlayerThread(is: ByteArrayInputStream) extends Thread {
 
 object TTSUtils {
 
-  def tts(lang: String, word: String): Array[Byte] = Http("http://translate.google.com/translate_tts")
-    .param("tl", lang)
-    .param("q", word)
-    .option(urlConn ⇒ urlConn.addRequestProperty("User-Agent", "Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; Win64; x64; Trident/5.0)"))
-    .asBytes
+  def tts(lang: String, word: String): Array[Byte] =
+    Http("http://translate.google.com/translate_tts")
+      .param("tl", lang)
+      .param("q", word)
+      .option(urlConn ⇒ urlConn.addRequestProperty("User-Agent", "Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; Win64; x64; Trident/5.0)"))
+      .options(HttpOptions.connTimeout(5000), HttpOptions.readTimeout(5000))
+      .asBytes
 
   def play(string: LString) = {
     val audio = tts(string.lang, string.string)
@@ -33,7 +36,7 @@ object TTSUtils {
       try {
         Thread.sleep(10);
       } catch {
-        case e ⇒ e.printStackTrace();
+        case e: Throwable ⇒ e.printStackTrace();
       }
     }
   }
