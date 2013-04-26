@@ -105,6 +105,10 @@
 							<id>train-date</id>
 							<mainClass>trainer.datetime.DateTrainingsLoop</mainClass>
 						</launcher>
+						<launcher>
+							<id>train-calc</id>
+							<mainClass>trainer.math.MathTrainer</mainClass>
+						</launcher>
 					</launchers>
 				</configuration>
 			</plugin>
