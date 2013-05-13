@@ -5,6 +5,10 @@ import scala.Console._
 import utils.RandomUtils._
 object SansVoirTrainer extends App {
 
+//♖♘♗♕♔♙
+//♜♞♝♚♛♟
+  //      'p', 'R', 'p', 'B', 'Q', 'K', 'B', 'p', 'R'
+
   val board =
     (
       ('R', 'p', 'B', 'Q', 'K', 'B', 'p', 'R'),
