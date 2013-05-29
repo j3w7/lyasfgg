@@ -55,9 +55,9 @@ object YearTrainingsLoop extends App {
     readLine
 
     val cc = year.toString.substring(0, 2).toInt
-    val dy = year.toString.substring(2, 4).toInt
+    //val dy = year.toString.substring(2, 4).toInt
 
-    val s = (cv(cc) + r(dy)) % 7
+    val s = (cv(cc) + r(year)) % 7
 
     println(s + "\n")
 
