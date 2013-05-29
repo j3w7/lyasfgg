@@ -1,5 +1,7 @@
 package trainer.vocab
 
+import scala.collection.mutable.LinkedList
+
 object DiziGui extends App {
   val dizigui = """弟子规
 总叙
@@ -104,6 +106,25 @@ object DiziGui extends App {
 
   // TODO parse into headings and three-character groups
   // TODO try parser combinators to achieve this
+
+  val ll = new LinkedList()
+
+  var pos = 0
+
+  while (true) {
+
+    var c : Char = ' '
+      
+    do {
+      c = dizigui(pos)
+    } while (!c.isLetter);
+
+    readChar match {
+      case c => print(c)
+      case _ => print("x") 
+    }
+
+  }
 
   for (line <- dizigui.lines) {
     print(line)
