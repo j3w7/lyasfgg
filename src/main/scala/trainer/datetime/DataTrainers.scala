@@ -6,7 +6,6 @@ import scala.collection.immutable.HashSet
 import scala.math.abs
 import org.joda.time.format.DateTimeFormat
 import spells.WeekDaySpellBenjamin.cv
-import spells.WeekDaySpellBenjamin.cvc2
 import spells.WeekDaySpellBenjamin.mv
 import spells.WeekDaySpellBenjamin.r
 import utils.CalendarUtils.genDate
@@ -14,6 +13,8 @@ import utils.CalendarUtils.getMonthName
 import utils.CalendarUtils.getWeekDay
 import utils.RandomUtils
 import org.joda.time.DateTime
+
+import spells.WeekDaySpellBenjamin._
 
 object DateTrainingsLoop extends App {
 
@@ -24,6 +25,13 @@ object DateTrainingsLoop extends App {
     val myAnswer = readLine
 
     val weekday = getWeekDay(dt, GERMAN)
+
+    val d = dt.getDayOfMonth()
+    val m = dt.getMonthOfYear()
+    val y = dt.getYear()
+
+    println(s"mv ${mv(m)}, cv ${cv(y)}, cvc2 ${cvc(y, m)}, r ${r(y)}")
+
     //    val msg = if (myAnswer == weekday) "ok" else "no, it's a " + weekday
     println(weekday)
     println
@@ -121,7 +129,7 @@ object DaysForWeekdayLoop extends App {
     print(getWeekDay(wn, GERMAN) + " " + m + " " + y)
     readLine
 
-    val offs = (wn + mv(m) + cv(y) + r(y) + cvc2(y, m)) % 7
+    val offs = (wn + mv(m) + cv(y) + r(y) + cvc(y, m)) % 7
 
     val days = for (
       i ← 0 to 4;
