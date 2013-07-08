@@ -1,6 +1,9 @@
 package trainer.math
 
-object MasterCode {
+/**
+ * cf. <a href="http://en.wikipedia.org/wiki/Mnemonic_major_system">major system</a>
+ */
+object MajorSystem {
   //0 	/s/ /z/ 	s, z, soft c 	"z" is the first letter of zero. The other letters have a similar sound.
 
   //1 	/t/ /d/ 	t, d 	t & d have one downstroke and sound similar (some variant systems include "th")
@@ -23,17 +26,18 @@ object MasterCode {
 
   //Unassigned 		Vowel sounds, w,h,y,x 	These can be used anywhere without changing a word's number value
 
-  val code = Map(
-    0 -> List("s", "z"),
-    1 -> List("t", "d"),
-    2 -> List("n"),
-    3 -> List("m"),
-    4 -> List("r"),
-    5 -> List("l"),
-    6 -> List("j", "sh", "sch"),
-    7 -> List("k", "g"),
-    8 -> List("f", "v"),
-    9 -> List("p", "b")
+  def encode = Map[Char, List[String]](
+    '0' -> List("s", "z"),
+    '1' -> List("t", "d"),
+    '2' -> List("n"),
+    '3' -> List("m"),
+    '4' -> List("r"),
+    '5' -> List("l"),
+    '6' -> List("j", "sh", "sch"),
+    '7' -> List("k", "g"),
+    '8' -> List("f", "v"),
+    '9' -> List("p", "b")
   )
 
 }
+
