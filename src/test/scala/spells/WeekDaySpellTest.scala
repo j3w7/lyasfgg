@@ -13,17 +13,17 @@ class WeekDaySpellTest extends FlatSpec with GeneratorDrivenPropertyChecks {
   "A weekday" should "be calculated correctly" in {
 
     for (
-      dt <- daysFromTo(
-        new LocalDate(1600, 01, 01),
+      dt ← daysFromTo(
+        new LocalDate(1600, 1, 1),
         new LocalDate(2199, 12, 31))
     ) {
 
       var weekday = dt.getDayOfWeek % 7
 
       val weekdayMental = WeekDaySpellBenjamin.nameOfDay(
-        dt.dayOfMonth().get(),
-        dt.monthOfYear().get(),
-        dt.year().get())
+        new DD(dt.dayOfMonth().get()),
+        new MM(dt.monthOfYear().get()),
+        new YYYY(dt.year().get()))
       println(dt)
       assert(weekdayMental === weekday)
 

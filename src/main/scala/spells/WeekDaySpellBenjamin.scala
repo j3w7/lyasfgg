@@ -1,21 +1,16 @@
 package spells
 
 import java.lang.Math.abs
-import org.joda.time.DateTime
+
 import org.joda.time.LocalDate
+
+import data.numbers.BoundedInt
 
 class Interval[T](val from: T, val to: T)(implicit num: Numeric[T]) {
   import num.{ mkNumericOps, mkOrderingOps }
 
   def mid: Double = (from.toDouble + to.toDouble) / 2.0
   def union(other: Interval[T]) = new Interval(from min other.from, to max other.to)
-}
-
-class BoundedInt(val range: Range, val int: Int) {
-}
-
-object BoundedInt {
-  implicit def toInt: BoundedInt ⇒ Int = _.int
 }
 
 class DD(i: Int) extends BoundedInt(1 until 31, i)
@@ -54,8 +49,7 @@ object WeekDaySpellBenjamin {
 
   def yv(y: YYYY, m: MM) = cv(y) + cvc(y, m)
 
-  // TODO remove . int
-  private def nameOfDay(d: DD, m: MM, y: YYYY): Int =
+  def nameOfDay(d: DD, m: MM, y: YYYY): Int =
     (d + mv(m) + cv(y) + r(y) + cvc(y, m)) % 7
 
 }

@@ -13,8 +13,11 @@ import utils.CalendarUtils.getMonthName
 import utils.CalendarUtils.getWeekDay
 import utils.RandomUtils
 import org.joda.time.DateTime
-
 import spells.WeekDaySpellBenjamin._
+import spells.YYYY
+import spells.MM
+import spells.DD
+import spells.CC
 
 object DateTrainingsLoop extends App {
 
@@ -26,9 +29,9 @@ object DateTrainingsLoop extends App {
 
     val weekday = getWeekDay(dt, GERMAN)
 
-    val d = dt.getDayOfMonth()
-    val m = dt.getMonthOfYear()
-    val y = dt.getYear()
+    val d = new DD(dt.getDayOfMonth())
+    val m = new MM(dt.getMonthOfYear())
+    val y = new YYYY(dt.getYear())
 
     println(s"mv ${mv(m)}, cv ${cv(y)}, cvc2 ${cvc(y, m)}, r ${r(y)}")
 
@@ -44,7 +47,7 @@ object MonthTrainingsLoop extends App {
 
   while (true) {
 
-    val month = RandomUtils.randBetween(1, 12)
+    val month = new MM(RandomUtils.randBetween(1, 12))
     print(getMonthName(month, GERMANY))
     readLine
 
@@ -58,11 +61,11 @@ object YearTrainingsLoop extends App {
 
   while (true) {
 
-    val year = RandomUtils.randBetween(1600, 2199)
+    val year = new YYYY(RandomUtils.randBetween(1600, 2199))
     println(year)
     readLine
 
-    val cc = year.toString.substring(0, 2).toInt
+    val cc = new CC(year.toString.substring(0, 2).toInt)
     //val dy = year.toString.substring(2, 4).toInt
 
     val s = (cv(cc) + r(year)) % 7
@@ -124,8 +127,8 @@ object DaysForWeekdayLoop extends App {
   while (true) {
 
     val wn = RandomUtils.randBetween(0, 6)
-    val m = RandomUtils.randBetween(1, 12)
-    val y = RandomUtils.randBetween(1600, 2099)
+    val m = new MM(RandomUtils.randBetween(1, 12))
+    val y = new YYYY(RandomUtils.randBetween(1600, 2099))
     print(getWeekDay(wn, GERMAN) + " " + m + " " + y)
     readLine
 
